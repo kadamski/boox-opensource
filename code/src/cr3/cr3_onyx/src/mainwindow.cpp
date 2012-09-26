@@ -902,18 +902,42 @@ void OnyxMainWindow::showTableOfContents()
     QStandardItem *parent = model.invisibleRootItem();
     for (size_t i = 0;i < paragraphs.size();++i)
     {
+        QList<QStandardItem *> list;
+
         QStandardItem *item= new QStandardItem(titles[i]);
         item->setData(paths[i],Qt::UserRole+100);
         item->setEditable(false);
         ptrs.push_back(item);
 
+        QString pagestr;
+        pagestr.setNum(pages[i]+1); //pages[i] is 0 based so we add 1
+
+        QStandardItem *item_page= new QStandardItem(pagestr);
+        item_page->setEditable(false);
+        item_page->setTextAlignment(Qt::AlignCenter);
+
+        list.append(item);
+        list.append(item_page);
+
         // Get parent.
         parent = searchParent(i, paragraphs, ptrs, model);
-        parent->appendRow(item);
+        parent->appendRow(list);
     }
+    QList<QString> headers;
+    headers.append(QApplication::tr("Title"));
+    headers.append(QApplication::tr("Page"));
+
+    model.setHorizontalHeaderLabels(headers);
 
     TreeViewDialog dialog( this );
     dialog.setModel( &model);
+
+    QVector<int> per;
+    per.append(85);
+    per.append(15);
+
+    dialog.tree().setColumnWidth(per);
+    dialog.tree().showHeader(true);
 
     int ret = dialog.popup( tr("Table of Contents") );
     if (ret != QDialog::Accepted)
