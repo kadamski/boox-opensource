@@ -884,7 +884,16 @@ void OnyxMainWindow::showTableOfContents()
             titles.push_back( cr2qt(m->getName()));
             paths.push_back(cr2qt(m->getPath()));
             pages.push_back(m->getPage());
+            for ( int k=0; k<m->getChildCount(); k++ )
+            {  
+                LVTocItem *o = m->getChild(k);
+                paragraphs.push_back(o->getLevel());
+                titles.push_back( cr2qt(o->getName()));
+                paths.push_back(cr2qt(o->getPath()));
+                pages.push_back(o->getPage());
+            }
         }
+
     }
 
     std::vector<QStandardItem *> ptrs;
